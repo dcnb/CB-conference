@@ -1,33 +1,87 @@
 ##########
-# collectionbuilder-csv
-# Jekyll Digital Collection Generator
+# Conference Platform
+# Built on CollectionBuilder-CSV
+# Static website framework for academic conferences
 # https://github.com/CollectionBuilder/collectionbuilder-csv
 ##########
+
+##########
+# CONFERENCE SETTINGS
+#
+# Primary conference information - appears throughout the site
+conference:
+  title: "National Interdisciplinary Lookout Conference"
+  short_title: "NILC 2026"
+  year: 2026
+  dates: "June 15-17, 2026"
+  location: "University of Idaho"
+  city: "Moscow, Idaho"
+
+  # Key Dates
+  key_dates:
+    - label: "Abstract Submission Opens"
+      date: "2025-12-01"
+    - label: "Submission Deadline"
+      date: "2026-02-15"
+    - label: "Notification of Acceptance"
+      date: "2026-03-15"
+    - label: "Early Registration Deadline"
+      date: "2026-04-30"
+    - label: "Conference Dates"
+      date: "2026-06-15"
+
+  # Registration
+  registration:
+    url: "https://example.com/register"
+    open: true
+    early_bird_deadline: "2026-04-30"
+    prices:
+      regular: "$180"
+      student: "$75"
+      virtual: "$50"
+
+  # Submission
+  submission:
+    url: "https://example.com/submit"
+    open: false
+    types:
+      - "Paper (20 min)"
+      - "Panel (90 min)"
+      - "Poster"
+      - "Workshop (half-day)"
+
+  # Social Media
+  social:
+    twitter: "@NILCconf"
+    hashtag: "#NILC2026"
+
+  # Contact
+  contact_email: "conference@uidaho.edu"
 
 ##########
 # URL VARIABLES
 #
 # site domain, full URL to the production location of your collection
-url: 
+url:
 # path to location on the domain if necessary e.g. /digital/hjccc
-baseurl: 
+baseurl:
 # location of code, the full url to your github repository
 source-code: https://github.com/CollectionBuilder/collectionbuilder-csv
 
 ##########
 # SITE SETTINGS
 #
-# title of site appears in banner
-title: CollectionBuilder CSV
+# title of site appears in banner (use conference.title for most pages)
+title: National Interdisciplinary Lookout Conference
 # tagline, a short phrase that will appear throughout the site in the top banner
-tagline: Digital Collection Magic with Static Web Technologies
+tagline: Interdisciplinary Research and Creative Expression
 # description appears in meta tags and other locations
 # this description might appear in search result lists, keep around 160 characters max
-description: "CollectionBuilder-CSV is a template for creating digital collection exhibits using static web technology."
+description: "Annual conference bringing together scholars and practitioners in interdisciplinary research, creative expression, and digital scholarship."
 # keywords, a short list of subjects describing the collection, separated by semicolon, to appear in rich markup
-keywords: idaho; history; inland northwest
-# creator of the digital collection, to appear in meta tags; we typically use our GitHub usernames but feel free to just use your name
-author: CollectionBuilder
+keywords: conference; interdisciplinary; research; digital humanities
+# creator of the digital collection, to appear in meta tags
+author: Conference Organizers
 
 ##########
 # COLLECTION SETTINGS
@@ -60,70 +114,7 @@ organization-logo-nav: https://www.lib.uidaho.edu/collectionbuilder/cdil-white.p
 # ROBOTS EXCLUDE
 #
 # set noindex to true if you do NOT want Google to index your site
-# noindex: true 
-
-##########
-# CONFERENCE SETTINGS
-#
-conference:
-  title: "National Interdisciplinary Lookout Conference"
-  short_title: "NILC 2026"
-  year: 2026
-  dates: "June 15-17, 2026"
-  location: "University of Idaho"
-  city: "Moscow, Idaho"
-
-  # Key Dates
-  key_dates:
-    - label: "Abstract Submission Opens"
-      date: "2025-12-01"
-    - label: "Submission Deadline"
-      date: "2026-02-15"
-    - label: "Notification of Acceptance"
-      date: "2026-03-15"
-    - label: "Early Registration Deadline"
-      date: "2026-04-30"
-    - label: "Conference Dates"
-      date: "2026-06-15"
-
-  # Registration
-  registration:
-    url: "https://example.com/register"
-    open: true
-    early_bird_deadline: "2026-04-30"
-    prices:
-      regular: "$150"
-      student: "$75"
-      virtual: "$50"
-
-  # Submission
-  submission:
-    url: "https://example.com/submit"
-    open: false
-    types:
-      - "Paper (20 min)"
-      - "Panel (90 min)"
-      - "Poster"
-      - "Workshop (half-day)"
-
-  # Social Media
-  social:
-    twitter: "@NILCconf"
-    hashtag: "#NILC2026"
-
-  # Contact
-  contact_email: "conference@uidaho.edu"
-
-# Theme colors (extends CB defaults)
-conference-colors:
-  primary: "#7C3626"
-  secondary: "#B0907E"
-  accent: "#E8E0D8"
-
-# Additional data files
-conference-data:
-  events: events
-  participants: participants
+# noindex: true
 
 ##########
 # BUILD SETTINGS

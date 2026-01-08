@@ -4,11 +4,11 @@ Schedule,/schedule/,
 Speakers,/speakers/,
 Participate,/participate/,
 Venue,/venue/,
-Documentation,/docs.html,
-About & Info,,
-About,/about.html,About & Info
-Committee,/committee/,About & Info
-Sponsors,/sponsors/,About & Info
+About,,
+About,/about.html,About
+Committee,/committee/,About
+Sponsors,/sponsors/,About
+Documentation,/docs.html,About
 Archive,,
 Proceedings,/archives/,Archive
 Browse,/browse.html,Archive

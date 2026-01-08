@@ -32,9 +32,9 @@ author: CollectionBuilder
 ##########
 # COLLECTION SETTINGS
 #
-# Set the metadata for your collection (the name of the CSV file in your _data directory that describes the objects in your collection) 
+# Set the metadata for your collection (the name of the CSV file in your _data directory that describes the objects in your collection)
 # Use the filename of your CSV **without** the ".csv" extension! E.g. _data/demo-metadata.csv --> "demo-metadata"
-metadata: demo-compoundobjects-metadata 
+metadata: conference-metadata 
 # page generation settings [optional!]
 # [optional: only used if you need to tweak CB defaults or generate from more than one data file]
 # page_gen:
@@ -63,17 +63,80 @@ organization-logo-nav: https://www.lib.uidaho.edu/collectionbuilder/cdil-white.p
 # noindex: true 
 
 ##########
-# BUILD SETTINGS 
+# CONFERENCE SETTINGS
+#
+conference:
+  title: "National Interdisciplinary Lookout Conference"
+  short_title: "NILC 2026"
+  year: 2026
+  dates: "June 15-17, 2026"
+  location: "University of Idaho"
+  city: "Moscow, Idaho"
+
+  # Key Dates
+  key_dates:
+    - label: "Abstract Submission Opens"
+      date: "2025-12-01"
+    - label: "Submission Deadline"
+      date: "2026-02-15"
+    - label: "Notification of Acceptance"
+      date: "2026-03-15"
+    - label: "Early Registration Deadline"
+      date: "2026-04-30"
+    - label: "Conference Dates"
+      date: "2026-06-15"
+
+  # Registration
+  registration:
+    url: "https://example.com/register"
+    open: true
+    early_bird_deadline: "2026-04-30"
+    prices:
+      regular: "$150"
+      student: "$75"
+      virtual: "$50"
+
+  # Submission
+  submission:
+    url: "https://example.com/submit"
+    open: false
+    types:
+      - "Paper (20 min)"
+      - "Panel (90 min)"
+      - "Poster"
+      - "Workshop (half-day)"
+
+  # Social Media
+  social:
+    twitter: "@NILCconf"
+    hashtag: "#NILC2026"
+
+  # Contact
+  contact_email: "conference@uidaho.edu"
+
+# Theme colors (extends CB defaults)
+conference-colors:
+  primary: "#7C3626"
+  secondary: "#B0907E"
+  accent: "#E8E0D8"
+
+# Additional data files
+conference-data:
+  events: events
+  participants: participants
+
+##########
+# BUILD SETTINGS
 #
 # Note: use environment variable on build command to include analytics
 # JEKYLL_ENV=production jekyll build
 # (this is done automatically by gh-pages build)
 #
 # Library directory location. This allows you to customize where the standard assets are found.
-# provide a relative path in this repository or full url 
+# provide a relative path in this repository or full url
 lib-assets: /assets/lib
 # ignore stuff
-exclude: [docs/, Rakefile, rakelib/, README.md, LICENSE, CITATION.cff, CODE_OF_CONDUCT.md, CONTRIBUTING.md, SECURITY.md]
+exclude: [docs/, Rakefile, rakelib/, README.md, LICENSE, CITATION.cff, CODE_OF_CONDUCT.md, CONTRIBUTING.md, SECURITY.md, conference-platform-instructions.md, Claude.md, plan.md]
 # compress CSS output
 sass:
   style: compressed

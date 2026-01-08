@@ -1,0 +1,32 @@
+{% comment %}
+    Key Dates Timeline Component
+    Displays important conference dates in a vertical timeline
+    Uses dates from site.conference.key_dates in _config.yml
+{% endcomment %}
+
+<div class="key-dates-timeline">
+  {% if site.conference.key_dates %}
+    {% for date_item in site.conference.key_dates %}
+      <div class="timeline-item {% if date_item.highlight %}timeline-highlight{% endif %}">
+        <div class="timeline-marker"></div>
+        <div class="timeline-content">
+          <div class="timeline-date">
+            {{ date_item.date | date: "%B %-d, %Y" }}
+          </div>
+          <div class="timeline-label">
+            {{ date_item.label }}
+          </div>
+          {% if date_item.note %}
+            <div class="timeline-note text-muted">
+              {{ date_item.note }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="alert alert-warning">
+      <i class="bi bi-exclamation-triangle-fill"></i> Key dates not configured. Please add them to _config.yml under conference.key_dates.
+    </div>
+  {% endif %}
+</div>

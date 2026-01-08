@@ -1,0 +1,135 @@
+{% comment %}
+    Speaker Modal Component
+    Bootstrap modal with full speaker bio and session list
+    Used by: speaker-card.html
+    Parameters: participant (from site.data.participants)
+{% endcomment %}
+
+<div class="modal fade" id="modal-{{ include.participant.participant_id }}" tabindex="-1" aria-labelledby="modal-{{ include.participant.participant_id }}-label" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="d-flex align-items-center gap-3">
+          {% if include.participant.image %}
+            <img src="{{ include.participant.image }}"
+                 alt="{{ include.participant.name }}"
+                 class="rounded-circle"
+                 style="width: 60px; height: 60px; object-fit: cover;">
+          {% endif %}
+          <div>
+            <h5 class="modal-title mb-0" id="modal-{{ include.participant.participant_id }}-label">
+              {{ include.participant.name }}
+            </h5>
+            {% if include.participant.affiliation %}
+              <small class="text-muted">{{ include.participant.affiliation }}</small>
+            {% endif %}
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        {% comment %} Contact Links {% endcomment %}
+        {% if include.participant.website or include.participant.email or include.participant.twitter or include.participant.orcid %}
+          <div class="speaker-contact-links mb-4">
+            {% if include.participant.website %}
+              <a href="{{ include.participant.website }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-globe"></i> Website
+              </a>
+            {% endif %}
+            {% if include.participant.email %}
+              <a href="mailto:{{ include.participant.email }}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-envelope-fill"></i> Email
+              </a>
+            {% endif %}
+            {% if include.participant.twitter %}
+              <a href="https://twitter.com/{{ include.participant.twitter | remove: '@' }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-twitter-x"></i> {{ include.participant.twitter }}
+              </a>
+            {% endif %}
+            {% if include.participant.orcid %}
+              <a href="https://orcid.org/{{ include.participant.orcid }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                ORCID: {{ include.participant.orcid }}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {% comment %} Biography {% endcomment %}
+        {% if include.participant.bio %}
+          <div class="speaker-bio mb-4">
+            <h6>Biography</h6>
+            {{ include.participant.bio | markdownify }}
+          </div>
+        {% endif %}
+
+        {% comment %} Presentation Title/Abstract {% endcomment %}
+        {% if include.participant.presentation_title %}
+          <div class="speaker-presentation mb-4">
+            <h6>Presentation</h6>
+            <p class="fw-bold mb-1">{{ include.participant.presentation_title }}</p>
+            {% if include.participant.presentation_abstract %}
+              <p class="text-muted">{{ include.participant.presentation_abstract }}</p>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {% comment %} Sessions as Speaker {% endcomment %}
+        {% assign speaker_sessions = site.data.events | where_exp: "e", "e.speakers contains include.participant.participant_id" %}
+        {% if speaker_sessions.size > 0 %}
+          <div class="speaker-sessions mb-4">
+            <h6><i class="bi bi-mic-fill"></i> Presenting at {{ speaker_sessions.size }} session{% if speaker_sessions.size > 1 %}s{% endif %}:</h6>
+            <ul class="list-group">
+              {% for session in speaker_sessions %}
+                <li class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <a href="/schedule/#{{ session.event_id }}" class="fw-bold text-decoration-none">
+                        {{ session.title }}
+                      </a>
+                      <div class="text-muted small">
+                        <i class="bi bi-calendar-event"></i> {{ session.date | date: "%A, %B %-d" }}
+                        at {{ session.start_time }}
+                        {% if session.location %}
+                          | <i class="bi bi-geo-alt"></i> {{ session.location }}
+                        {% endif %}
+                      </div>
+                      {% if session.type %}
+                        <span class="badge bg-secondary mt-1">{{ session.type | capitalize }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        {% comment %} Sessions as Chair {% endcomment %}
+        {% assign chaired_sessions = site.data.events | where: "chair", include.participant.participant_id %}
+        {% if chaired_sessions.size > 0 %}
+          <div class="speaker-chairing mb-4">
+            <h6><i class="bi bi-person-badge"></i> Chairing {{ chaired_sessions.size }} session{% if chaired_sessions.size > 1 %}s{% endif %}:</h6>
+            <ul class="list-group">
+              {% for session in chaired_sessions %}
+                <li class="list-group-item">
+                  <a href="/schedule/#{{ session.event_id }}" class="fw-bold text-decoration-none">
+                    {{ session.title }}
+                  </a>
+                  <div class="text-muted small">
+                    <i class="bi bi-calendar-event"></i> {{ session.date | date: "%A, %B %-d" }}
+                    at {{ session.start_time }}
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

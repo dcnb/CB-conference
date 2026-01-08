@@ -1,0 +1,113 @@
+---
+layout: page
+---
+{%- comment -%}
+  Conference Home Layout
+  Uses CollectionBuilder feature includes for hero, cards, buttons
+{%- endcomment -%}
+
+{%- comment -%} Schema.org structured data for SEO {%- endcomment -%}
+{% include conference/event-schema.html %}
+
+{%- comment -%} Hero Section with Jumbotron {%- endcomment -%}
+{% include feature/jumbotron.html objectid=page.hero_image heading=site.conference.title text=page.hero_text heading_level="h1" padding="3em" %}
+
+<div class="container">
+  <div class="row mb-5">
+    <div class="col-md-8">
+
+      {%- comment -%} Conference Details {%- endcomment -%}
+      <div class="conference-info mb-4">
+        <h2 class="h4 mb-3">Conference Information</h2>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="d-flex align-items-start">
+              <div class="me-3 fs-3">📅</div>
+              <div>
+                <strong>When</strong><br>
+                {{ site.conference.dates }}
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex align-items-start">
+              <div class="me-3 fs-3">📍</div>
+              <div>
+                <strong>Where</strong><br>
+                {{ site.conference.location }}<br>
+                {{ site.conference.city }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {%- comment -%} Countdown Timer {%- endcomment -%}
+      {% assign conference_start = site.conference.key_dates | where_exp: "item", "item.label contains 'Conference'" | first %}
+      {% if conference_start %}
+      <div class="mb-4">
+        {% include conference/countdown.html target_date=conference_start.date %}
+      </div>
+      {% endif %}
+
+      {%- comment -%} About Section {%- endcomment -%}
+      {{ content }}
+
+      {%- comment -%} Registration CTA {%- endcomment -%}
+      {% if site.conference.registration.open %}
+      <div class="mt-4 mb-4">
+        {% include feature/button.html text="Register Now" link=site.conference.registration.url color="primary" size="lg" centered=true %}
+        {% if site.conference.submission.open %}
+        {% include feature/button.html text="Submit a Proposal" link=site.conference.submission.url color="success" size="lg" centered=true %}
+        {% endif %}
+      </div>
+      {% endif %}
+
+    </div>
+
+    <div class="col-md-4">
+
+      {%- comment -%} Key Dates Timeline {%- endcomment -%}
+      {% include conference/key-dates-timeline.html %}
+
+      {%- comment -%} Featured Speakers {%- endcomment -%}
+      {% assign keynotes = site.data.participants | where: "role", "keynote" %}
+      {% if keynotes.size > 0 %}
+      <div class="mt-4">
+        <h3 class="h5 mb-3">Keynote Speakers</h3>
+        {% for speaker in keynotes limit:3 %}
+        <div class="mb-3">
+          {% capture speaker_card %}
+**[{{ speaker.name }}](/speakers/#speaker-{{ speaker.participant_id }})**
+{{ speaker.affiliation }}
+          {% endcapture %}
+          {% if speaker.image %}
+          {% include feature/card.html text=speaker_card objectid=speaker.image width="100" %}
+          {% else %}
+          {% include feature/card.html text=speaker_card width="100" %}
+          {% endif %}
+        </div>
+        {% endfor %}
+        <div class="text-center mt-3">
+          {% include feature/button.html text="View All Speakers" link="/speakers/" color="outline-primary" size="sm" %}
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  {%- comment -%} Sponsors Section {%- endcomment -%}
+  <div class="row mt-5 pt-4 border-top">
+    <div class="col-12">
+      <h3 class="h4 text-center mb-4">Supported By</h3>
+      <div class="text-center">
+        <p class="text-muted mb-3">
+          <a href="{{ '/sponsors/' | relative_url }}">View all sponsors</a> |
+          <a href="mailto:{{ site.conference.contact_email }}">Become a sponsor</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>

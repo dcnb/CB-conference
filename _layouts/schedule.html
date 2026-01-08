@@ -1,0 +1,92 @@
+---
+layout: default
+---
+{% comment %}
+    Schedule Layout
+    Displays conference schedule with day navigation and filtering
+{% endcomment %}
+
+<a href="#schedule-content" class="visually-hidden-focusable">Skip to schedule content</a>
+
+<div class="container my-4">
+  <div class="row">
+    <div class="col-md-9">
+      <h1 id="schedule-heading">{{ page.title | default: "Conference Schedule" }}</h1>
+      {% if page.subtitle %}
+        <p class="lead">{{ page.subtitle }}</p>
+      {% endif %}
+    </div>
+    <div class="col-md-3 text-end">
+      <button class="btn btn-outline-primary mt-2" onclick="window.print()" aria-label="Print schedule">
+        <i class="bi bi-printer"></i> Print Schedule
+      </button>
+    </div>
+  </div>
+
+  {% comment %} Get unique dates from events {% endcomment %}
+  {% assign all_dates = "" | split: "" %}
+  {% for event in site.data.events %}
+    {% unless all_dates contains event.date %}
+      {% assign all_dates = all_dates | push: event.date %}
+    {% endunless %}
+  {% endfor %}
+  {% assign sorted_dates = all_dates | sort %}
+
+  <div class="row">
+    <div class="col-md-12">
+      {% comment %} Day Navigation Tabs {% endcomment %}
+      <ul class="nav nav-tabs mb-4" id="dayTabs" role="tablist">
+        {% for date in sorted_dates %}
+          <li class="nav-item" role="presentation">
+            <button class="nav-link {% if forloop.first %}active{% endif %}"
+                    id="day-{{ date }}-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#day-{{ date }}-content"
+                    type="button"
+                    role="tab"
+                    aria-controls="day-{{ date }}-content"
+                    aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+              {{ date | date: "%A, %b %-d" }}
+            </button>
+          </li>
+        {% endfor %}
+      </ul>
+
+      {% comment %} Track and Type Filters {% endcomment %}
+      {% include conference/track-filters.html %}
+
+      {% comment %} Tab Content - Each Day {% endcomment %}
+      <div class="tab-content" id="dayTabsContent" role="region" aria-labelledby="schedule-heading" id="schedule-content">
+        {% for date in sorted_dates %}
+          <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+               id="day-{{ date }}-content"
+               role="tabpanel"
+               aria-labelledby="day-{{ date }}-tab">
+            {% include conference/schedule-day.html date=date %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {% comment %} Print-friendly version {% endcomment %}
+  <div class="row mt-4 no-print">
+    <div class="col-md-12">
+      <button onclick="window.print()" class="btn btn-outline-secondary">
+        <i class="bi bi-printer-fill"></i> Print Schedule
+      </button>
+    </div>
+  </div>
+
+  {% comment %} Content from the page markdown {% endcomment %}
+  {% if content != "" %}
+    <div class="row mt-4">
+      <div class="col-md-12">
+        {{ content }}
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{% comment %} Include conference JavaScript {% endcomment %}
+<script src="{{ '/assets/js/conference.js' | relative_url }}"></script>

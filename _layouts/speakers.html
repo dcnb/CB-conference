@@ -1,0 +1,64 @@
+---
+layout: default
+---
+{% comment %}
+    Speakers Layout
+    Displays conference speakers/participants directory with search and filtering
+{% endcomment %}
+
+<div class="container my-4">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>{{ page.title | default: "Conference Speakers" }}</h1>
+      {% if page.subtitle %}
+        <p class="lead">{{ page.subtitle }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {% comment %} Search and Filter Controls {% endcomment %}
+  <div class="row mt-4">
+    <div class="col-md-12">
+      {% include conference/speaker-search.html %}
+    </div>
+  </div>
+
+  {% comment %} Filter speakers by page-specific role if specified {% endcomment %}
+  {% if page.filter_role %}
+    {% assign display_participants = site.data.participants | where: "role", page.filter_role %}
+  {% else %}
+    {% comment %} Show speakers, keynotes, organizers, committee by default (exclude generic attendees if any) {% endcomment %}
+    {% assign display_participants = site.data.participants | where_exp: "p", "p.role == 'speaker' or p.role == 'keynote' or p.role == 'organizer' or p.role == 'committee' or p.role == 'chair'" %}
+  {% endif %}
+
+  {% comment %} Sort by name {% endcomment %}
+  {% assign sorted_participants = display_participants | sort: "name" %}
+
+  {% comment %} Speakers Grid {% endcomment %}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="speakers-grid" id="speakers-grid">
+        {% for participant in sorted_participants %}
+          {% include conference/speaker-card.html participant=participant %}
+        {% endfor %}
+      </div>
+
+      {% comment %} No results message (hidden by default, shown by JS if needed) {% endcomment %}
+      <div id="no-speakers-message" class="alert alert-info d-none" role="alert">
+        <i class="bi bi-info-circle-fill"></i> No speakers match your search criteria. Try adjusting your filters.
+      </div>
+    </div>
+  </div>
+
+  {% comment %} Content from the page markdown {% endcomment %}
+  {% if content != "" %}
+    <div class="row mt-4">
+      <div class="col-md-12">
+        {{ content }}
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{% comment %} Include conference JavaScript {% endcomment %}
+<script src="{{ '/assets/js/conference.js' | relative_url }}"></script>

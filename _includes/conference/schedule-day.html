@@ -1,0 +1,26 @@
+{% comment %}
+    Schedule Day Component
+    Displays all sessions for a single conference day
+    Used by: schedule.html layout
+    Parameters: date (YYYY-MM-DD format)
+{% endcomment %}
+
+<div class="schedule-day" id="day-{{ include.date }}">
+  <h3 class="day-header">
+    {{ include.date | date: "%A, %B %-d, %Y" }}
+  </h3>
+
+  {% assign day_events = site.data.events | where: "date", include.date | sort: "start_time" %}
+
+  {% if day_events.size > 0 %}
+    <div class="day-sessions">
+      {% for event in day_events %}
+        {% include conference/session-card.html event=event %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      <i class="bi bi-info-circle-fill"></i> No sessions scheduled for this day.
+    </div>
+  {% endif %}
+</div>

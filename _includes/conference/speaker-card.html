@@ -1,0 +1,92 @@
+{% comment %}
+    Speaker Card Component
+    Displays individual speaker/participant with photo, info, and bio modal
+    Used by: speakers.html layout
+    Parameters: participant (from site.data.participants)
+{% endcomment %}
+
+<div class="speaker-card"
+     id="speaker-{{ include.participant.participant_id }}"
+     data-name="{{ include.participant.name | downcase }}"
+     data-affiliation="{{ include.participant.affiliation | downcase }}"
+     data-role="{{ include.participant.role }}">
+
+  <div class="speaker-image">
+    {% if include.participant.image %}
+      <img src="{{ include.participant.image }}"
+           alt="{{ include.participant.name }}"
+           class="img-fluid rounded-circle">
+    {% else %}
+      <div class="speaker-placeholder rounded-circle">
+        {{ include.participant.name | slice: 0 }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="speaker-info">
+    <h4 class="speaker-name">{{ include.participant.name }}</h4>
+
+    {% if include.participant.affiliation %}
+      <p class="speaker-affiliation text-muted mb-2">{{ include.participant.affiliation }}</p>
+    {% endif %}
+
+    {% if include.participant.role %}
+      <span class="badge bg-secondary speaker-role mb-2">{{ include.participant.role | capitalize }}</span>
+    {% endif %}
+
+    <div class="speaker-links mb-2">
+      {% if include.participant.website %}
+        <a href="{{ include.participant.website }}"
+           target="_blank"
+           title="Website"
+           class="speaker-link-icon">
+          <i class="bi bi-globe"></i>
+        </a>
+      {% endif %}
+
+      {% if include.participant.email %}
+        <a href="mailto:{{ include.participant.email }}"
+           title="Email"
+           class="speaker-link-icon">
+          <i class="bi bi-envelope-fill"></i>
+        </a>
+      {% endif %}
+
+      {% if include.participant.twitter %}
+        <a href="https://twitter.com/{{ include.participant.twitter | remove: '@' }}"
+           target="_blank"
+           title="Twitter/X"
+           class="speaker-link-icon">
+          <i class="bi bi-twitter-x"></i>
+        </a>
+      {% endif %}
+
+      {% if include.participant.orcid %}
+        <a href="https://orcid.org/{{ include.participant.orcid }}"
+           target="_blank"
+           title="ORCID"
+           class="speaker-link-icon orcid-link">
+          ORCID
+        </a>
+      {% endif %}
+    </div>
+
+    {% comment %} Find sessions this speaker is presenting {% endcomment %}
+    {% assign speaker_sessions = site.data.events | where_exp: "e", "e.speakers contains include.participant.participant_id" %}
+    {% assign chaired_sessions = site.data.events | where: "chair", include.participant.participant_id %}
+
+    <div class="speaker-actions">
+      {% if include.participant.bio or speaker_sessions.size > 0 or chaired_sessions.size > 0 %}
+        <button type="button"
+                class="btn btn-sm btn-outline-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#modal-{{ include.participant.participant_id }}">
+          <i class="bi bi-person-fill"></i> Full Profile
+        </button>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% comment %} Modal for full speaker details {% endcomment %}
+{% include conference/speaker-modal.html participant=include.participant %}

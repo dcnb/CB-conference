@@ -1,0 +1,67 @@
+{% comment %}
+    Track Filters Component
+    Displays filter buttons for tracks and event types
+    Requires: conference.js for filtering functionality
+{% endcomment %}
+
+<div class="track-filters mb-4">
+  <div class="filter-section">
+    <h5>Filter by Track:</h5>
+    <div class="btn-group" role="group" aria-label="Track filters">
+      <button type="button" class="btn btn-outline-primary active" data-filter-track="all">
+        All Tracks
+      </button>
+
+      {% comment %} Collect unique tracks from events {% endcomment %}
+      {% assign all_tracks = "" | split: "" %}
+      {% for event in site.data.events %}
+        {% if event.track and event.track != "" %}
+          {% unless all_tracks contains event.track %}
+            {% assign all_tracks = all_tracks | push: event.track %}
+          {% endunless %}
+        {% endif %}
+      {% endfor %}
+
+      {% assign sorted_tracks = all_tracks | uniq | sort %}
+      {% for track in sorted_tracks %}
+        <button type="button" class="btn btn-outline-primary" data-filter-track="{{ track }}">
+          {{ track }}
+        </button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="filter-section mt-3">
+    <h5>Filter by Type:</h5>
+    <div class="btn-group" role="group" aria-label="Event type filters">
+      <button type="button" class="btn btn-outline-secondary active" data-filter-type="all">
+        All Types
+      </button>
+
+      {% comment %} Collect unique event types {% endcomment %}
+      {% assign all_types = "" | split: "" %}
+      {% for event in site.data.events %}
+        {% if event.type and event.type != "" %}
+          {% unless all_types contains event.type %}
+            {% assign all_types = all_types | push: event.type %}
+          {% endunless %}
+        {% endif %}
+      {% endfor %}
+
+      {% assign sorted_types = all_types | uniq | sort %}
+      {% for type in sorted_types %}
+        {% unless type == "break" %}
+          <button type="button" class="btn btn-outline-secondary" data-filter-type="{{ type }}">
+            {{ type | capitalize }}
+          </button>
+        {% endunless %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="filter-actions mt-3">
+    <button type="button" class="btn btn-sm btn-link" id="reset-filters">
+      <i class="bi bi-x-circle"></i> Reset All Filters
+    </button>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+{%- comment -%}
+  Conference Item Information
+  Displays links back to related sessions and speakers for conference presentation items
+{%- endcomment -%}
+
+{% if page.related_event or page.related_participant %}
+<div class="card mt-4 mb-4">
+  <div class="card-header bg-primary text-white">
+    <h3 class="h5 mb-0">Conference Information</h3>
+  </div>
+  <div class="card-body">
+
+    {%- comment -%} Link to related session/event {%- endcomment -%}
+    {% if page.related_event %}
+    {% assign event = site.data.events | where: "event_id", page.related_event | first %}
+    {% if event %}
+    <div class="mb-3">
+      <strong>Session:</strong>
+      <a href="{{ '/schedule/' | relative_url }}#{{ event.event_id }}">{{ event.title }}</a>
+      <div class="text-muted small">
+        {{ event.date | date: "%A, %B %d, %Y" }} | {{ event.start_time }} - {{ event.end_time }}
+        {% if event.location %} | {{ event.location }}{% endif %}
+      </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {%- comment -%} Link to related speaker(s) {%- endcomment -%}
+    {% if page.related_participant %}
+    <div class="mb-0">
+      <strong>Presenter(s):</strong>
+      {% assign participant_ids = page.related_participant | split: ";" %}
+      {% assign found_any = false %}
+      {% for pid in participant_ids %}
+        {% assign trimmed_pid = pid | strip %}
+        {% assign participant = site.data.participants | where: "participant_id", trimmed_pid | first %}
+        {% if participant %}
+          {% assign found_any = true %}
+          <a href="{{ '/speakers/' | relative_url }}#speaker-{{ participant.participant_id }}">{{ participant.name }}</a>{% unless forloop.last %}, {% endunless %}
+        {% endif %}
+      {% endfor %}
+      {% unless found_any %}
+        {{ page.creator }}
+      {% endunless %}
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endif %}

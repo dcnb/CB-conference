@@ -1,0 +1,70 @@
+{% comment %}
+    Countdown Timer Component
+    Displays countdown to conference start date
+    Parameters: target_date (YYYY-MM-DD format)
+{% endcomment %}
+
+{% assign target = include.target_date | default: site.conference.key_dates[4].date %}
+
+<div class="countdown-timer" id="countdown-{{ target | slugify }}" data-target="{{ target }}">
+  <div class="countdown-item">
+    <span class="countdown-number days">--</span>
+    <span class="countdown-label">Days</span>
+  </div>
+  <div class="countdown-item">
+    <span class="countdown-number hours">--</span>
+    <span class="countdown-label">Hours</span>
+  </div>
+  <div class="countdown-item">
+    <span class="countdown-number minutes">--</span>
+    <span class="countdown-label">Minutes</span>
+  </div>
+  <div class="countdown-item">
+    <span class="countdown-number seconds">--</span>
+    <span class="countdown-label">Seconds</span>
+  </div>
+</div>
+
+<script>
+(function() {
+  const countdownId = 'countdown-{{ target | slugify }}';
+  const countdown = document.getElementById(countdownId);
+
+  if (!countdown) return;
+
+  const targetDate = new Date(countdown.dataset.target + 'T00:00:00').getTime();
+
+  function updateCountdown() {
+    const now = new Date().getTime();
+    const diff = targetDate - now;
+
+    if (diff < 0) {
+      countdown.innerHTML = '<div class="countdown-message"><h4>Conference is Live!</h4></div>';
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    const daysEl = countdown.querySelector('.days');
+    const hoursEl = countdown.querySelector('.hours');
+    const minutesEl = countdown.querySelector('.minutes');
+    const secondsEl = countdown.querySelector('.seconds');
+
+    if (daysEl) daysEl.textContent = days;
+    if (hoursEl) hoursEl.textContent = hours;
+    if (minutesEl) minutesEl.textContent = minutes;
+    if (secondsEl) secondsEl.textContent = seconds;
+  }
+
+  updateCountdown();
+  const timer = setInterval(updateCountdown, 1000);
+
+  // Clean up on page unload
+  window.addEventListener('beforeunload', function() {
+    clearInterval(timer);
+  });
+})();
+</script>

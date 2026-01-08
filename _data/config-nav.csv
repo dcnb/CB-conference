@@ -1,9 +1,16 @@
 display_name,stub,dropdown_parent
 Home,/,
-Browse,/browse.html,
-Subjects,/subjects.html,
-Locations,/locations.html,
-Map,/map.html,
-Timeline,/timeline.html,
-Data,/data.html,
-About,/about.html,
+Schedule,/schedule/,
+Speakers,/speakers/,
+Participate,/participate/,
+Venue,/venue/,
+Documentation,/docs.html,
+About & Info,,
+About,/about.html,About & Info
+Committee,/committee/,About & Info
+Sponsors,/sponsors/,About & Info
+Archive,,
+Proceedings,/archives/,Archive
+Browse,/browse.html,Archive
+Timeline,/timeline.html,Archive
+Data,/data.html,Archive

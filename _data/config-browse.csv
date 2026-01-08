@@ -1,7 +1,10 @@
 field,display_name,btn,hidden,sort_name,facet_name
 date,Date,,,Date Created
 description,,,true,
-creator,Creator,,,
+creator,Creator/Presenter,,,
 subject,,true
-location,,true,,,Location Depicted
+type,Type,,,,Presentation Type
+related_event,Related Session,,,
+related_participant,Participants,,,
+location,,true,,,Location
 identifier,,,true,Identifier

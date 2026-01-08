@@ -1,0 +1,4 @@
+event_id,title,type,date,start_time,end_time,location,track,description,speakers,chair,keywords,virtual_link,recording
+keynote-opening,Opening Keynote: The Future of Research,keynote,2026-06-15,09:00,10:00,Main Auditorium,,Welcome keynote addressing emerging trends in interdisciplinary research and collaboration.,speaker-jones,,,https://zoom.us/j/example,
+panel-digital-methods,Panel: Digital Methods in Practice,panel,2026-06-15,10:30,12:00,Room 201,Digital Methods,"Discussion of computational methods, tools, and workflows for digital scholarship.","speaker-smith;speaker-garcia;speaker-lee",speaker-martinez,"digital methods;tools;workflow",,
+paper-session-1,Paper Session: Computational Analysis,paper,2026-06-15,13:00,14:30,Room 203,Digital Methods,Individual paper presentations on computational approaches to textual analysis.,speaker-brown,speaker-clark,"computational analysis;text mining;NLP",,

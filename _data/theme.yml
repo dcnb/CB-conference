@@ -100,6 +100,12 @@ navbar-color: navbar-dark
 # Choose from bg-primary, bg-secondary, bg-success, bg-danger, bg-warning, bg-info, bg-light, bg-dark, bg-white
 navbar-background: bg-dark
 
+# CONFERENCE COLORS
+# These colors customize the conference theme throughout the site
+conference-primary-color: "#7C3626"
+conference-secondary-color: "#B0907E"
+conference-accent-color: "#E8E0D8"
+
 # BOOTSWATCH THEMES [optional!]
 # You can replace the standard Bootstrap theme with a Bootswatch (https://github.com/thomaspark/bootswatch) option
 # Choose from: cerulean; cosmo; cyborg; darkly; flatly; journal; litera; lumen; lux; materia; minty; pulse; sandstone; simplex; sketchy; slate; solar; spacelab; superhero; united; yeti 

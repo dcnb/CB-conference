@@ -63,17 +63,6 @@
           </div>
         {% endif %}
 
-        {% comment %} Presentation Title/Abstract {% endcomment %}
-        {% if include.participant.presentation_title %}
-          <div class="speaker-presentation mb-4">
-            <h6>Presentation</h6>
-            <p class="fw-bold mb-1">{{ include.participant.presentation_title }}</p>
-            {% if include.participant.presentation_abstract %}
-              <p class="text-muted">{{ include.participant.presentation_abstract }}</p>
-            {% endif %}
-          </div>
-        {% endif %}
-
         {% comment %} Sessions as Speaker {% endcomment %}
         {% assign speaker_sessions = site.data.events | where_exp: "e", "e.speakers contains include.participant.participant_id" %}
         {% if speaker_sessions.size > 0 %}
@@ -85,8 +74,11 @@
                   <div class="d-flex justify-content-between align-items-start">
                     <div>
                       <a href="/schedule/#{{ session.event_id }}" class="fw-bold text-decoration-none">
-                        {{ session.title }}
+                        {{ session.title }}{% if session.event_title %} - {{ session.event_title }}{% endif %}
                       </a>
+                      {% if session.event_abstract %}
+                        <p class="small text-muted mb-1 mt-1">{{ session.event_abstract }}</p>
+                      {% endif %}
                       <div class="text-muted small">
                         <i class="bi bi-calendar-event"></i> {{ session.date | date: "%A, %B %-d" }}
                         at {{ session.start_time }}

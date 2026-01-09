@@ -1,6 +1,7 @@
 {% comment %}
     Session Card Component
     Displays individual conference session with time, title, speakers, location
+    Supports compound objects (parent panels with child presentations)
     Used by: schedule-day.html
     Parameters: event (from site.data.events)
 {% endcomment %}
@@ -18,91 +19,222 @@
   </div>
 
   <div class="session-content">
-    <div class="session-header">
-      <h4 class="session-title" id="title-{{ include.event.event_id }}">{{ include.event.title }}</h4>
-      {% if include.event.track %}
-        <span class="badge bg-secondary session-track">{{ include.event.track }}</span>
-      {% endif %}
-    </div>
-
-    {% if include.event.speakers %}
-      <div class="session-speakers">
-        {% assign speaker_ids = include.event.speakers | split: ";" %}
-        {% for sid in speaker_ids %}
-          {% assign speaker = site.data.participants | where: "participant_id", sid | first %}
-          {% if speaker %}
-            <a href="/speakers/#speaker-{{ speaker.participant_id }}" class="speaker-link">
-              {% if speaker.image %}
-                <img src="{{ speaker.image }}" alt="{{ speaker.name }}" class="speaker-thumb">
-              {% endif %}
-              <span class="speaker-name">{{ speaker.name }}</span>
-            </a>
-          {% endif %}
-        {% endfor %}
-      </div>
+    {% comment %} Check if this is a parent event with children {% endcomment %}
+    {% assign child_presentations = site.data.events | where: "event_parent", include.event.event_id %}
+    {% assign is_parent = false %}
+    {% if child_presentations.size > 0 %}
+      {% assign is_parent = true %}
     {% endif %}
 
-    {% if include.event.chair %}
-      {% assign chair = site.data.participants | where: "participant_id", include.event.chair | first %}
-      {% if chair %}
-        <div class="session-chair">
-          <small class="text-muted">Chair: {{ chair.name }}</small>
+    {% comment %} PARENT PANEL DISPLAY {% endcomment %}
+    {% if is_parent %}
+      <h3 class="session-title mb-2" id="title-{{ include.event.event_id }}">{{ include.event.title }}</h3>
+
+      {% if include.event.chair %}
+        {% assign chair = site.data.participants | where: "participant_id", include.event.chair | first %}
+        {% if chair %}
+          <div class="session-chair mb-2">
+            <small class="text-muted">Chair: {{ chair.name }}</small>
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if include.event.track %}
+        <span class="badge bg-secondary mb-2">{{ include.event.track }}</span>
+      {% endif %}
+
+      {% comment %} Parent description {% endcomment %}
+      {% if include.event.description %}
+        {% assign description_words = include.event.description | strip_html | split: " " %}
+        <div class="session-description mb-3">
+          {% if description_words.size > 10 %}
+            <span class="description-preview">{{ description_words | slice: 0, 10 | join: " " }}</span><span class="ellipsis-desc-{{ include.event.event_id }}">...</span><span class="description-remaining collapse" id="desc-{{ include.event.event_id }}"> {{ description_words | slice: 10, description_words.size | join: " " }}</span>
+            <button class="btn btn-sm btn-outline-secondary ms-2 more-less-toggle"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#desc-{{ include.event.event_id }}"
+                    aria-expanded="false"
+                    onclick="if(this.textContent.includes('More')) { this.textContent = '<< Less'; document.querySelector('.ellipsis-desc-{{ include.event.event_id }}').style.display = 'none'; } else { this.textContent = 'More >>'; document.querySelector('.ellipsis-desc-{{ include.event.event_id }}').style.display = 'inline'; }">More >></button>
+          {% else %}
+            {{ include.event.description }}
+          {% endif %}
         </div>
       {% endif %}
+
+      {% comment %} Child presentations {% endcomment %}
+      {% for child in child_presentations %}
+        <div class="child-presentation mb-3 ps-3 border-start border-2 border-secondary">
+          <h5 class="mb-1">{{ child.event_title }}</h5>
+
+          {% comment %} Speaker buttons {% endcomment %}
+          {% if child.speakers %}
+            <div class="mb-2">
+              {% assign child_speaker_ids = child.speakers | split: ";" %}
+              {% for sid in child_speaker_ids %}
+                {% assign child_speaker = site.data.participants | where: "participant_id", sid | first %}
+                {% if child_speaker %}
+                  <button class="btn btn-sm btn-outline-secondary me-1 mb-1"
+                          data-bs-toggle="modal"
+                          data-bs-target="#modal-{{ child_speaker.participant_id }}"
+                          type="button">
+                    {{ child_speaker.name }}
+                  </button>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% comment %} Child abstract {% endcomment %}
+          {% if child.event_abstract %}
+            {% assign abstract_words = child.event_abstract | strip_html | split: " " %}
+            <div class="child-abstract">
+              {% if abstract_words.size > 10 %}
+                <span class="abstract-preview">{{ abstract_words | slice: 0, 10 | join: " " }}</span><span class="ellipsis-abstract-{{ child.event_id }}">...</span><span class="abstract-remaining collapse" id="abstract-{{ child.event_id }}"> {{ abstract_words | slice: 10, abstract_words.size | join: " " }}</span>
+                <button class="btn btn-sm btn-outline-secondary ms-2 more-less-toggle"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#abstract-{{ child.event_id }}"
+                        aria-expanded="false"
+                        onclick="if(this.textContent.includes('More')) { this.textContent = '<< Less'; document.querySelector('.ellipsis-abstract-{{ child.event_id }}').style.display = 'none'; } else { this.textContent = 'More >>'; document.querySelector('.ellipsis-abstract-{{ child.event_id }}').style.display = 'inline'; }">More >></button>
+              {% else %}
+                {{ child.event_abstract }}
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+    {% else %}
+      {% comment %} STANDALONE EVENT DISPLAY {% endcomment %}
+      <h4 class="session-title mb-2" id="title-{{ include.event.event_id }}">
+        {{ include.event.title }}{% if include.event.event_title %}: {{ include.event.event_title }}{% endif %}
+      </h4>
+
+      {% if include.event.track %}
+        <span class="badge bg-secondary mb-2">{{ include.event.track }}</span>
+      {% endif %}
+
+      {% comment %} Speaker buttons {% endcomment %}
+      {% if include.event.speakers %}
+        <div class="session-speakers mb-2">
+          {% assign speaker_ids = include.event.speakers | split: ";" %}
+          {% for sid in speaker_ids %}
+            {% assign speaker = site.data.participants | where: "participant_id", sid | first %}
+            {% if speaker %}
+              <button class="btn btn-sm btn-outline-secondary me-1 mb-1"
+                      data-bs-toggle="modal"
+                      data-bs-target="#modal-{{ speaker.participant_id }}"
+                      type="button">
+                {{ speaker.name }}
+              </button>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% comment %} Chair {% endcomment %}
+      {% if include.event.chair %}
+        {% assign chair = site.data.participants | where: "participant_id", include.event.chair | first %}
+        {% if chair %}
+          <div class="session-chair mb-2">
+            <small class="text-muted">Chair: {{ chair.name }}</small>
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% comment %} Description or Abstract {% endcomment %}
+      {% assign content_text = include.event.description | default: include.event.event_abstract %}
+      {% if content_text %}
+        {% assign content_words = content_text | strip_html | split: " " %}
+        <div class="session-description mb-2">
+          {% if content_words.size > 10 %}
+            <span class="content-preview">{{ content_words | slice: 0, 10 | join: " " }}</span><span class="ellipsis-content-{{ include.event.event_id }}">...</span><span class="content-remaining collapse" id="content-{{ include.event.event_id }}"> {{ content_words | slice: 10, content_words.size | join: " " }}</span>
+            <button class="btn btn-sm btn-outline-secondary ms-2 more-less-toggle"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#content-{{ include.event.event_id }}"
+                    aria-expanded="false"
+                    onclick="if(this.textContent.includes('More')) { this.textContent = '<< Less'; document.querySelector('.ellipsis-content-{{ include.event.event_id }}').style.display = 'none'; } else { this.textContent = 'More >>'; document.querySelector('.ellipsis-content-{{ include.event.event_id }}').style.display = 'inline'; }">More >></button>
+          {% else %}
+            {{ content_text }}
+          {% endif %}
+        </div>
+      {% endif %}
+
     {% endif %}
 
-    <div class="session-meta">
+    {% comment %} Location and links {% endcomment %}
+    <div class="session-meta mt-2">
       {% if include.event.location %}
-        <span class="session-location">
+        <span class="session-location me-2">
           <i class="bi bi-geo-alt-fill"></i> {{ include.event.location }}
         </span>
       {% endif %}
 
       {% if include.event.virtual_link %}
-        <a href="{{ include.event.virtual_link }}" class="session-virtual" target="_blank">
+        <a href="{{ include.event.virtual_link }}" class="session-virtual me-2" target="_blank">
           <i class="bi bi-camera-video-fill"></i> Virtual Link
         </a>
       {% endif %}
+
+      <a href="#"
+         class="session-calendar"
+         onclick="addToCalendar('{{ include.event.event_id }}', '{{ include.event.title | escape }}', '{{ include.event.date }}', '{{ include.event.start_time }}', '{{ include.event.end_time }}', '{{ include.event.location | escape }}', '{{ include.event.description | strip_html | escape }}'); return false;"
+         title="Add to calendar">
+        <i class="bi bi-calendar-plus"></i> Add to Calendar
+      </a>
     </div>
 
-    {% if include.event.description %}
-      <div class="session-abstract">
-        <button class="btn btn-sm btn-outline-primary"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#abstract-{{ include.event.event_id }}"
-                aria-expanded="false">
-          <i class="bi bi-chevron-down"></i> Details
-        </button>
-        <div class="collapse mt-2" id="abstract-{{ include.event.event_id }}">
-          <div class="card card-body">
-            {{ include.event.description | markdownify }}
+    {% comment %} Keywords - consolidated at bottom {% endcomment %}
+    {% if is_parent %}
+      {% assign has_keywords = false %}
+      {% if include.event.keywords %}{% assign has_keywords = true %}{% endif %}
+      {% for child in child_presentations %}
+        {% if child.keywords %}{% assign has_keywords = true %}{% endif %}
+      {% endfor %}
+
+      {% if has_keywords %}
+        <div class="all-keywords mt-2">
+          <div class="small text-muted">
+            <strong>Keywords:</strong>
             {% if include.event.keywords %}
-              <div class="session-keywords mt-2">
-                <strong>Keywords:</strong>
-                {% assign keywords = include.event.keywords | split: ";" %}
-                {% for keyword in keywords %}
-                  <span class="badge bg-light text-dark">{{ keyword | strip }}</span>
-                {% endfor %}
-              </div>
+              {% assign keywords = include.event.keywords | split: ";" %}
+              {% for keyword in keywords %}
+                <span class="badge bg-light text-dark" style="font-size: 0.7rem;">{{ keyword | strip }}</span>
+              {% endfor %}
             {% endif %}
+            {% for child in child_presentations %}
+              {% if child.keywords %}
+                {% assign child_keywords = child.keywords | split: ";" %}
+                {% for keyword in child_keywords %}
+                  <span class="badge bg-light text-dark" style="font-size: 0.7rem;">{{ keyword | strip }}</span>
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
           </div>
         </div>
-      </div>
+      {% endif %}
+    {% else %}
+      {% if include.event.keywords %}
+        <div class="all-keywords mt-2">
+          <div class="small text-muted">
+            <strong>Keywords:</strong>
+            {% assign keywords = include.event.keywords | split: ";" %}
+            {% for keyword in keywords %}
+              <span class="badge bg-light text-dark" style="font-size: 0.7rem;">{{ keyword | strip }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
     {% endif %}
 
-    <div class="session-actions mt-2">
-      {% if include.event.recording %}
+    {% comment %} Recording link {% endcomment %}
+    {% if include.event.recording %}
+      <div class="session-actions mt-2">
         <a href="{{ include.event.recording }}" class="btn btn-sm btn-success" target="_blank">
           <i class="bi bi-play-circle-fill"></i> Watch Recording
         </a>
-      {% endif %}
-
-      <button class="btn btn-sm btn-outline-primary"
-              onclick="addToCalendar('{{ include.event.event_id }}', '{{ include.event.title | escape }}', '{{ include.event.date }}', '{{ include.event.start_time }}', '{{ include.event.end_time }}', '{{ include.event.location | escape }}', '{{ include.event.description | strip_html | escape }}')"
-              title="Add to calendar">
-        <i class="bi bi-calendar-plus"></i> Add to Calendar
-      </button>
-    </div>
+      </div>
+    {% endif %}
   </div>
 </div>

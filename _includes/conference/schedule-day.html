@@ -10,7 +10,9 @@
     {{ include.date | date: "%A, %B %-d, %Y" }}
   </h3>
 
-  {% assign day_events = site.data.events | where: "date", include.date | sort: "start_time" %}
+  {% comment %} Filter to only show parent events (those without event_parent) {% endcomment %}
+  {% assign all_day_events = site.data.events | where: "date", include.date | sort: "start_time" %}
+  {% assign day_events = all_day_events | where_exp: "e", "e.event_parent == blank or e.event_parent == '' or e.event_parent == nil" %}
 
   {% if day_events.size > 0 %}
     <div class="day-sessions">
